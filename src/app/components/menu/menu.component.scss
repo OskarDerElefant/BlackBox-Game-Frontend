@@ -1,0 +1,22 @@
+.container {
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  width: 40vw;
+}
+
+.image-murder-story{
+  background-size:cover;
+  background-image:url('/assets/img/Mord-in-der-Zukunft-Bild.jpeg');
+}
+
+.image-treasure-story{
+  background-size:cover;
+  background-image:url('/assets/img/Verlorener-Schatz-Bild.jpeg');
+  background-position:50% 50%;
+}
+
+

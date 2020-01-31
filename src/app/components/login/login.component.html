@@ -1,3 +1,25 @@
-<p>
-  login works!
-</p>
+<label>Email</label>
+<input [(ngModel)]="email">
+<label>Passwort</label>
+<input [(ngModel)]="password">
+<button mat-raised-button *ngIf="!isRegisterdClicked" (click)="login()">Anmelden</button>
+<button mat-button *ngIf="!isRegisterdClicked" (click)="selectRegister()">Noch nicht registriert? hier klicken</button>
+
+<div *ngIf="isRegisterdClicked">
+  <label>Username</label>
+  <input [(ngModel)]="username">
+  <button mat-raised-button (click)="register()">Registrieren</button>
+</div>
+
+
+<!--<form class="example-form" [formGroup]="formGroup">
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Email" [formControl]="emailFormControl">
+    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+      Please enter a valid email address
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Email is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+</form> -->

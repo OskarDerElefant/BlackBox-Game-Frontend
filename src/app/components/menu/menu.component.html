@@ -1,5 +1,13 @@
-<p>
-  menu works!
-  <button>A</button>
-  <button mat-button routerLink="login" routerLinkActive="active">Login</button>
-</p>
+<nb-layout>
+<nb-layout-column>
+<div>
+  <p style="display: flex; justify-content: center;">Welche Story möchtest du spielen?
+  <div class="container">
+    <button mat-button class="image-murder-story" routerLink="/chat/{{stringConstants.MURDER_STORY}}" routerLinkActive="active">Mord in der Zukunft</button>
+    <button mat-button class="image-treasure-story" routerLink="/chat/{{stringConstants.TREASURE_STORY}}">Verlorener Schatz</button>
+  </div>
+</div>
+  <button (click)="callBackend()">TESTER</button>
+</nb-layout-column>
+
+</nb-layout>

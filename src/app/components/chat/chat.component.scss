@@ -1,0 +1,26 @@
+.parentContainer {
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+}
+
+.chat {
+  border-style: solid;
+  width: 40%;
+  height: 80vh;
+  display: inline-block;
+}
+
+::ng-deep nb-layout-column {
+  justify-content: center;
+  display: flex;
+}
+nb-chat {
+  width: 500px;
+  height: 80vw;
+  justify-content: center;
+}
+
+::ng-deep nb-chat-form.div {
+
+}

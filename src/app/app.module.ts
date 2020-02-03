@@ -12,14 +12,14 @@ import {
   MatIconModule,
   MatMenuModule,
   MatSelect,
-  MatSelectModule,
+  MatSelectModule, MatTableModule, MatTabsModule,
   MatToolbarModule,
   MatTooltipModule
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import { ChatElementComponent } from './components/chat/chat-element/chat-element.component';
-import {NbThemeModule, NbChatModule, NbLayoutModule} from '@nebular/theme';
+import {NbThemeModule, NbChatModule, NbLayoutModule, NbSelectModule} from '@nebular/theme';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
@@ -58,7 +58,10 @@ const appRoutes: Routes = [
     MatInputModule,
     ReactiveFormsModule,
     FormsModule,
-    MatSelectModule
+    MatSelectModule,
+    NbSelectModule,
+    MatTabsModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

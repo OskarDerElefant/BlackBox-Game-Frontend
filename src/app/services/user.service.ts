@@ -24,7 +24,8 @@ export class UserService {
   public login(user: User) {
     const loginUrl = this.url + 'login';
     let succesfullLogin;
-    this.http.get<boolean>(loginUrl).subscribe(
+    sessionStorage.setItem('email', user.email);
+    /*this.http.get<boolean>(loginUrl).subscribe(
       data => {
         succesfullLogin = data;
         if(succesfullLogin) {
@@ -34,7 +35,7 @@ export class UserService {
           return false;
         }
       }
-    );
+    );*/
   }
 
   /**
@@ -45,7 +46,8 @@ export class UserService {
   public logout(user: User) {
     const logoutUrl = this.url + 'logout';
     let succesfullLogout;
-    this.http.get<boolean>(logoutUrl).subscribe(
+    sessionStorage.removeItem('email');
+    /*this.http.get<boolean>(logoutUrl).subscribe(
       data => {
         succesfullLogout = data;
         if(succesfullLogout) {
@@ -55,7 +57,7 @@ export class UserService {
           return false;
         }
       }
-    );
+    );*/
   }
 
   /**

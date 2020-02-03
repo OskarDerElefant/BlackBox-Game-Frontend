@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     Validators.required,
     Validators.email,
   ]);
-  constructor(userService: UserService) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
   }
@@ -31,7 +31,8 @@ export class LoginComponent implements OnInit {
     let user = new User();
     user.email = this.email;
     user.password = this.password;
-    //this.
+    this.userService.login(user);
+    console.log(sessionStorage.getItem('email'));
   }
 
   selectRegister() {

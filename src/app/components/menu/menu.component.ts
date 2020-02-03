@@ -10,6 +10,7 @@ import {StatisticService} from '../../services/statistic.service';
 export class MenuComponent implements OnInit {
 
   stringConstants = StringConstants;
+  loggedIn = sessionStorage.getItem('email');
 
   constructor(private statisticsService: StatisticService) { }
 

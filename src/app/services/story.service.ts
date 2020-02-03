@@ -17,6 +17,8 @@ export class StoryService {
 
   url = 'http://localhost:9000/api/game/';
 
+  allMessages = [];
+
   constructor(private http: HttpClient) { }
 
   /**
@@ -67,4 +69,19 @@ export class StoryService {
     return null;
   }
 
+  /**
+   * Nachrichten werden lokal gespeichert, um nicht immer auf das Backend zugreifen zu müssen, um den Chat-Verlauf darzustellen.
+   * @param message
+   * Zu speichernde Nachricht, entweder NodeMessage oder Answer
+   */
+  public localSaveOfMessages(message: any) {
+    this.allMessages.push(message);
+  }
+
+  /**
+   * Gibt alle lokal gespeicherten Nachrichten zurück.
+   */
+  public getAllLocalMessages(): any[] {
+    return this.allMessages;
+  }
 }

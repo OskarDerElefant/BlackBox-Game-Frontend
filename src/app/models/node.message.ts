@@ -5,4 +5,5 @@ export class NodeMessage {
   nodeMessageID: number;
   type: MessageType;
   message: string;
+  sender: string;
 }

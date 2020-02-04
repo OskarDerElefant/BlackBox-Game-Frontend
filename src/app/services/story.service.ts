@@ -15,7 +15,7 @@ import {MessageObject} from '../models/message.object';
 })
 export class StoryService {
 
-  url = 'http://localhost:9000/api/game/';
+  url = 'http://localhost:9000/BlackboxWeb/';
 
   allMessages = [];
 
@@ -33,7 +33,8 @@ export class StoryService {
 
   public getNextMessageFromQueue(userID: number): Observable<any[]> {
     const nextMessageUrl = this.url + 'getNextMessage?';
-    return this.http.get<string[]>(nextMessageUrl + userID);
+    const params = 'userID=' + userID;
+    return this.http.get<string[]>(nextMessageUrl + params);
   }
 
   /**
@@ -55,7 +56,8 @@ export class StoryService {
    */
   restartCurrentGame(userID: number): Observable<boolean> {
     const currentGameUrl = this.url + 'restartCurrentGame?';
-    return this.http.get<any>(currentGameUrl + userID);
+    const params = 'userID=' + userID;
+    return this.http.get<any>(currentGameUrl + params);
   }
 
 
@@ -65,13 +67,22 @@ export class StoryService {
    * Zu speichernde Nachricht, entweder NodeMessage oder Answer
    */
   public localSaveOfMessages(message: any) {
-    this.allMessages.push(message);
+    /*if(sessionStorage.getItem('allMessages') != null) {
+      const allMessages = JSON.parse(sessionStorage.getItem('allMessages'));
+      allMessages.push(message);
+      sessionStorage.setItem('allMessages', JSON.stringify(allMessages));
+    } else {
+      const allMessages = [];
+      allMessages.push(message);
+      sessionStorage.setItem('allMessages', JSON.stringify(allMessages));
+    }*/
   }
 
   /**
    * Gibt alle lokal gespeicherten Nachrichten zurück.
    */
   public getAllLocalMessages(): any[] {
-    return this.allMessages;
+    return null;
+    //return JSON.parse(sessionStorage.getItem('allMessages'));
   }
 }

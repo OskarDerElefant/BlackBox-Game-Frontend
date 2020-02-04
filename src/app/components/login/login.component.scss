@@ -1,0 +1,71 @@
+mat-card{
+  /* position:center; */
+  margin-bottom: 155px;
+  width: 500px;
+  height: 500px;
+  text-align: center;
+  background-color: rgb(0, 0, 0);
+  border-color: rgb(0, 0, 0);
+  border-style: solid;
+  border-width: 3px;
+  color : white;
+}
+mat-card-header{
+  padding-top: 50px;
+  color:rgb(235, 119, 25);
+  display : flex;
+  justify-content: center;
+}
+.header{
+  margin-bottom: 35px;
+  padding-top: 50px;
+
+}
+.title{
+  font-size: xx-large;
+  color:rgb(235, 119, 25);
+}
+.sub-title{
+  font-size: large;
+  color: grey;
+}
+form{
+  font-size: large;
+  color: black;
+  background-color: rgb(235, 119, 25);
+}
+#mainDiv{
+  display : flex;
+  justify-content: center;
+  align-items: center;
+  height: 93vh;
+  background-color: rgb(0, 0, 0);
+}
+
+.row{
+  padding: 5px;
+  border-style: solid;
+  border-color: rgb(235, 119, 25);
+}
+mat-form-field{
+  width:60%;
+  background-color: rgb(235, 119, 25);
+}
+button{
+  font-size: large;
+}
+#buttonDiv{
+  margin-top: 20px;
+  color: rgb(2, 2, 2);
+  background-color: rgb(235, 119, 25);
+  margin-bottom: 25px;
+  font-size: medium;
+}
+
+.button {
+  margin-top: 20px;
+  color: rgb(2, 2, 2);
+  background-color: rgb(235, 119, 25);
+  margin-bottom: 25px;
+  font-size: smaller;
+}

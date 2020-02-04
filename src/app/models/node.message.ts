@@ -3,7 +3,7 @@ import {MessageType} from './message.type';
 export class NodeMessage {
   nodeMessageIdCounter: number;
   nodeMessageID: number;
-  type: MessageType;
+  messagetype: string;
   message: string;
   sender: string;
 }

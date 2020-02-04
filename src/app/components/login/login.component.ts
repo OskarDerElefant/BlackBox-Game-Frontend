@@ -35,10 +35,12 @@ export class LoginComponent implements OnInit {
     user.email = this.email;
     user.password = this.password;
     this.userService.login(user).subscribe(result => {
-      if (result.username != null && result.userID != null) {
-        sessionStorage.setItem('userID', result.userID);
+      console.log(result);
+      if (result.username !== 'null') {
+        sessionStorage.setItem('userID', String(result.userID));
         sessionStorage.setItem('username', result.username);
         this.storyService.restartCurrentGame(Number(result.userID)).subscribe( hasGame => {
+          console.log(hasGame);
           if(hasGame) {
             this.router.navigate(['/chat']);
           } else {
@@ -47,8 +49,6 @@ export class LoginComponent implements OnInit {
         });
       }
     });
-
-    console.log(sessionStorage.getItem('userID') + '      ' + sessionStorage.getItem('email'));
   }
 
   /**
@@ -59,11 +59,18 @@ export class LoginComponent implements OnInit {
     user.email = this.email;
     user.password = this.password;
     user.username = this.username;
-    this.userService.login(user).subscribe(result => {
-      if (result.username != null && result.userID != null) {
-        sessionStorage.setItem('userID', result.userID);
+    this.userService.registerUser(user).subscribe(result => {
+      console.log(result);
+      if (result.username !== 'null') {
+        sessionStorage.setItem('userID', String(result.userID));
         sessionStorage.setItem('username', result.username);
-        this.router.navigate(['']);
+        this.storyService.restartCurrentGame(Number(result.userID)).subscribe(hasGame => {
+          if (hasGame) {
+            this.router.navigate(['/chat']);
+          } else {
+            this.router.navigate(['']);
+          }
+        });
       }
     });
   }

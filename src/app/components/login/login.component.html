@@ -1,25 +1,53 @@
+<div id="mainDiv">
+  <mat-card>
+    <!-- <mat-card-content> -->
+    <div class="header">
+      <div class="title">BLACKBOX</div>
+    </div>
+    <div>
+        <div class="row">
+          <!-- <label for="username">Username</label> -->
+          <mat-form-field>
+            <input matInput type="text" placeholder="E-Mail"  [(ngModel)]="email"
+                    required color="accent"/>
+          </mat-form-field>
+          <!-- <div *ngIf="f.submitted
+                && !username.valid">Username is required</div> -->
+        </div>
+        <div class="row">
+          <!-- <label for="password">Password</label> -->
+          <mat-form-field>
+            <input matInput type="password" placeholder="Passwort"  [(ngModel)]="password"
+                   required color="accent"/>
+          </mat-form-field>
+        </div>
+        <div *ngIf="!isRegisterdClicked">
+          <button mat-button id="buttonDiv" (click)="login()">Login</button>
+        </div>
+        <div *ngIf="!isRegisterdClicked">
+          <button mat-button class="button"(click)="selectRegister()">Noch nicht registriert? hier klicken</button>
+        </div>
+
+      <div *ngIf="isRegisterdClicked">
+        <div class="row">
+          <mat-form-field>
+            <input matInput type="text" placeholder="Benutzername"  [(ngModel)]="username"
+                   required color="accent"/>
+          </mat-form-field>
+        </div>
+        <button mat-button class="button" (click)="register()">Registrieren</button>
+      </div>
+    </div>
+
+    <!-- </mat-card-content> -->
+  </mat-card>
+</div>
+
+<!--
 <label>Email</label>
 <input [(ngModel)]="email">
 <label>Passwort</label>
 <input [(ngModel)]="password">
 <button mat-raised-button *ngIf="!isRegisterdClicked" (click)="login()">Anmelden</button>
 <button mat-button *ngIf="!isRegisterdClicked" (click)="selectRegister()">Noch nicht registriert? hier klicken</button>
-
-<div *ngIf="isRegisterdClicked">
-  <label>Username</label>
-  <input [(ngModel)]="username">
-  <button mat-raised-button (click)="register()">Registrieren</button>
-</div>
-
-
-<!--<form class="example-form" [formGroup]="formGroup">
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="Email" [formControl]="emailFormControl">
-    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-      Please enter a valid email address
-    </mat-error>
-    <mat-error *ngIf="emailFormControl.hasError('required')">
-      Email is <strong>required</strong>
-    </mat-error>
-  </mat-form-field>
-</form> -->
+-->

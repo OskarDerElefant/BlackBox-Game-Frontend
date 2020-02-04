@@ -8,7 +8,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { StatisticComponent } from './components/statistic/statistic.component';
 import {RouterModule, Routes} from '@angular/router';
 import {
-  MatButtonModule,
+  MatButtonModule, MatCardModule,
   MatIconModule,
   MatMenuModule,
   MatSelect,
@@ -28,6 +28,7 @@ const appRoutes: Routes = [
   { path: 'logout', component: LoginComponent},
   { path: 'home', component: MenuComponent, canActivate: [AuthGuardService] } ,
   { path: 'chat/:selectedStory', component: ChatComponent, canActivate: [AuthGuardService] } ,
+  { path: 'chat', component: ChatComponent, canActivate: [AuthGuardService] } ,
   { path: 'statistics', component: StatisticComponent, canActivate: [AuthGuardService] } ,
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
@@ -61,7 +62,8 @@ const appRoutes: Routes = [
     NbSelectModule,
     MatTabsModule,
     MatTableModule,
-    NbIconModule
+    NbIconModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

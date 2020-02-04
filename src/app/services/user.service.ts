@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 })
 export class UserService {
 
-  url = 'http://localhost:9000/';
+  url = 'http://localhost:9000/BlackboxWeb/';
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -22,13 +22,13 @@ export class UserService {
    * @param user
    * User, der sich anmelden möchte.
    */
-  public login(user: User): Observable<any> {
+  public login(user: User): Observable<User> {
     const loginUrl = this.url + 'login?';
 
     let objectString = JSON.stringify(user);
     objectString = btoa(objectString);
 
-    return this.http.get<boolean>(loginUrl + objectString);
+    return this.http.get<User>(loginUrl + objectString);
   }
 
   /**
@@ -51,7 +51,7 @@ export class UserService {
     let objectString = JSON.stringify(user);
     objectString = btoa(objectString);
 
-    return this.http.get<boolean>(registerUrl + objectString);
+    return this.http.get<User>(registerUrl + objectString);
   }
 
   isUserLoggedIn() {

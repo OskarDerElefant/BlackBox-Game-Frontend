@@ -28,38 +28,48 @@ export class StatisticComponent implements OnInit {
   }
 
   /**
-   * Setzt die persönlichen Statistiken.
+   * Läd zu jedem Spiel, welches ein Spieler gespielt hat, die Statistiken. Sortiert nach Szenario.
    */
   setPersonalStatistics() {
     const userID = Number(sessionStorage.getItem('userID'));
+
+    this.personalDataSource = [];
+    const statisticsOfFistScenario = [];
+    const statisticsOfSecondScenario = [];
     this.statisticService.getUserStatistic(userID).subscribe(
-      data => {
-        this.personalDataSource = data;
+      results => {
+        results.forEach(statisticGameObject => {
+          if (statisticGameObject.scenarioID === 0) {
+            statisticsOfFistScenario.push(statisticGameObject);
+          } else if (statisticGameObject.scenarioID === 1) {
+            statisticsOfSecondScenario.push(statisticGameObject);
+          }
+        });
       }
     );
-    let s = new StatisticUserObject();
-    s.numberOfGames = 1;
-    s.playedTime= 10;
-    s.userID = 10;
-    s.visitedNodes = 20;
-    s.timeUnit = 'Minuten';
-    this.personalDataSource = [];
-    this.personalDataSource.push(s);
+    this.personalDataSource = statisticsOfFistScenario;
+    this.personalDataSource = this.personalDataSource.concat(statisticsOfSecondScenario);
   }
 
   /**
    * Setzt die generellen Statistiken.
+   * Für jeden Nutzer gibt es jeweils einen Eintrag pro Szenario, wo alle Spiele eines Nutzers eines Szenarios zu einer Statistik zusammengeführt werden.
    */
   setGeneralStatistics() {
-    let s = new StatisticUserObject();
-    s.numberOfGames = 1;
-    s.playedTime = 10;
-    s.userID = 10;
-    s.visitedNodes = 20;
-    s.timeUnit = 'Minuten';
     this.generalDataSource = [];
-    this.generalDataSource.push(s);
-
+    const statisticsOfFistScenario = [];
+    const statisticsOfSecondScenario = [];
+    this.statisticService.getGeneralStatistic().subscribe( results => {
+      results.forEach(userStatisticObject => {
+        if (userStatisticObject.scenarioID === 0) {
+          statisticsOfFistScenario.push(userStatisticObject);
+        } else if (userStatisticObject.scenarioID === 1) {
+          statisticsOfSecondScenario.push(userStatisticObject);
+        }
+      });
+      this.generalDataSource = statisticsOfFistScenario;
+      this.generalDataSource = this.generalDataSource.concat(statisticsOfSecondScenario);
+    });
   }
 
 }

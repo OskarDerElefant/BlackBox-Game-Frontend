@@ -33,16 +33,6 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     this.setBasicConfiguration();
-
-    /*this.messages.push({
-        text: 'Drag & drop a file or a group of files.',
-        reply: false,
-        user: {
-          name: this.botName,
-          avatar: 'https://i.gifer.com/no.gif',
-        },
-      },
-    );*/
     this.userName = sessionStorage.getItem('username');
     this.setPositionOfSelection();
   }
@@ -55,7 +45,7 @@ export class ChatComponent implements OnInit {
   setBasicConfiguration() {
     this.selectedStory = this.route.snapshot.paramMap.get('selectedStory');
     if (this.storyService.getAllLocalMessages() != null && this.storyService.getAllLocalMessages().length > 0) {
-      this.setAllMessagesBasedOnLocalStorage();
+      //this.setAllMessagesBasedOnLocalStorage();
     } else if(this.selectedStory === StringConstants.MURDER_STORY) {
         this.selectedStoryNumber = 0;
         this.storyTitle = 'Mord in der Zukunft';
@@ -64,6 +54,9 @@ export class ChatComponent implements OnInit {
         this.selectedStoryNumber = 1;
         this.storyTitle = 'Der verlorene Schatz';
         this.setSelectedStory();
+    } else {
+      console.log('NOMESSAGE');
+      this.setAllMessagesBasedOnLocalStorage();
     }
   }
 
@@ -96,13 +89,14 @@ export class ChatComponent implements OnInit {
       } else {
         const recievedMessages = messages;
         recievedMessages.forEach(message => {
-          let obj = JSON.parse(message);
-          if(obj.answerType === 'NodeMessage') {
-            this.createBotMessageToDisplay(obj.msg);
+          console.log(message.answertype);
+          if(message.answertype === 'NodeMessage') {
+            console.log(message.msg);
+            this.createBotMessageToDisplay(message.msg);
             this.getNextMessage(userID);
-          } else if(obj.answerType === 'AnswerList') {
-            this.setAnswers(obj.msg);
-          } else if(obj.answerType === 'Servermessage') {
+          } else if(message.answertype === 'AnswerList') {
+            this.setAnswers(message.msg);
+          } else if(message.answertype === 'Servermessage') {
 
           }
           // Es muss gewartet werden bis nachricht da ist.
@@ -118,7 +112,7 @@ export class ChatComponent implements OnInit {
    * Die umzuwandelnde Nachricht.
    */
   createBotMessageToDisplay(nodeMessage: NodeMessage) {
-    if (nodeMessage.type === MessageType.Text) {
+    if (nodeMessage.messagetype === 'Text') {
       this.messages.push({
         text: nodeMessage.message,
         reply: false,
@@ -126,30 +120,40 @@ export class ChatComponent implements OnInit {
           name: nodeMessage.sender,
         }
       });
-    } else if (nodeMessage.type === MessageType.Image) {
+      this.storyService.localSaveOfMessages(nodeMessage);
+    } else if (nodeMessage.messagetype === 'Image') {
+      const url = '/assets' + nodeMessage.message;
       this.messages.push({
-        text: nodeMessage.message,
+        type: 'file',
         reply: false,
+        files: [ { url: '/assets' + nodeMessage.message, type: 'image/jpg' }],
         user: {
           name: nodeMessage.sender,
         }
       });
-    } else if (nodeMessage.type === MessageType.Video) {
+      this.storyService.localSaveOfMessages(nodeMessage);
+    } else if (nodeMessage.messagetype === 'Video') {
+      const url = '/assets' + nodeMessage.message;
       this.messages.push({
-        text: nodeMessage.message,
+        type: 'file',
         reply: false,
+        files: [ { url: '/assets' + nodeMessage.message, type: 'video/mp4' }],
         user: {
           name: nodeMessage.sender,
         }
       });
-    } else if (nodeMessage.type === MessageType.Voice) {
+      this.storyService.localSaveOfMessages(nodeMessage);
+    } else if (nodeMessage.messagetype === 'Voice') {
+      const url = '/assets' + nodeMessage.message;
       this.messages.push({
-        text: nodeMessage.message,
+        type: 'file',
         reply: false,
+        files: [ { url: '/assets' + nodeMessage.message, type: 'audio/mp3' }],
         user: {
           name: nodeMessage.sender,
         }
       });
+      this.storyService.localSaveOfMessages(nodeMessage);
     }
 
   }
@@ -216,6 +220,7 @@ export class ChatComponent implements OnInit {
   setAllMessagesBasedOnLocalStorage() {
     this.messages = [];
     const allMessages = this.storyService.getAllLocalMessages();
+    console.log('ALLLLLL ' + allMessages);
     if(allMessages.length > 0) {
       allMessages.forEach(element => {
         if(element instanceof NodeMessage) {

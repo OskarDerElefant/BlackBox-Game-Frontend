@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
 import {StatisticUserObject} from '../models/statistic.user.object';
+import {StatisticGameObject} from '../models/statistic.game.object';
 
 /**
  * Service for getting statistics either for a specific user or the overall statistics.
@@ -13,17 +14,18 @@ import {StatisticUserObject} from '../models/statistic.user.object';
 })
 export class StatisticService {
 
-  url = 'http://localhost:9000/';
+  url = 'http://localhost:9000/BlackboxWeb/';
 
   constructor(private http: HttpClient) { }
 
-  public getUserStatistic(userID: number): Observable<any> {
+  public getUserStatistic(userID: number): Observable<StatisticGameObject[]> {
     const userStatisticUrl = this.url + 'getUserStatistics?';
-    return this.http.get<any>(userStatisticUrl + userID);
+    const params = 'userID=' + userID;
+    return this.http.get<StatisticGameObject[]>(userStatisticUrl + params);
   }
 
-  public getGeneralStatistic(): Observable<any> {
+  public getGeneralStatistic(): Observable<StatisticUserObject[]> {
     const generalStatisticUrl = this.url + 'getStatistics?';
-    return this.http.get<any>(generalStatisticUrl);
+    return this.http.get<StatisticUserObject[]>(generalStatisticUrl);
   }
 }

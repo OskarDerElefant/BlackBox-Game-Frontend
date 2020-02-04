@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {StatisticService} from '../../services/statistic.service';
-import {StatisticObject} from '../../models/statistic.object';
+import {StatisticUserObject} from '../../models/statistic.user.object';
 
 /**
  * Component für Statistikseite. Läd generelle und userbezogene Statistiken.
@@ -31,12 +31,13 @@ export class StatisticComponent implements OnInit {
    * Setzt die persönlichen Statistiken.
    */
   setPersonalStatistics() {
-    /*this.statisticService.getUserStatistic(null).subscribe(
+    const userID = Number(sessionStorage.getItem('userID'));
+    this.statisticService.getUserStatistic(userID).subscribe(
       data => {
         this.personalDataSource = data;
       }
-    );*/
-    let s = new StatisticObject();
+    );
+    let s = new StatisticUserObject();
     s.numberOfGames = 1;
     s.playedTime= 10;
     s.userID = 10;
@@ -50,7 +51,7 @@ export class StatisticComponent implements OnInit {
    * Setzt die generellen Statistiken.
    */
   setGeneralStatistics() {
-    let s = new StatisticObject();
+    let s = new StatisticUserObject();
     s.numberOfGames = 1;
     s.playedTime = 10;
     s.userID = 10;

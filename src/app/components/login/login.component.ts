@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {User} from '../../models/user';
 import {UserService} from '../../services/user.service';
+import {Router} from '@angular/router';
+import {StoryService} from '../../services/story.service';
 
 @Component({
   selector: 'app-login',
@@ -10,39 +12,66 @@ import {UserService} from '../../services/user.service';
 })
 export class LoginComponent implements OnInit {
 
-  email: string = '';
-  password: string = '';
-  username: string = '';
+  email = '';
+  password = '';
+  username = '';
 
   isRegisterdClicked = false;
-  formGroup: FormGroup;
 
-
-  emailFormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-  ]);
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private storyService: StoryService, private router: Router) {
+  }
 
   ngOnInit() {
   }
 
+  /**
+   * User wird eingeloggt. UserID und unsername werden im session storage gespeichert.
+   * Wenn User eingeloggt ist wird geprüft, ob er noch ein offenes Spiel hat.
+   * Wenn er ein offenes Spiel hat, wird er direkt zum Chat weitergeleitet.
+   * Wenn er kein offenes Spiel hat, wird er zum Menü weitergeleitet.
+   */
   login() {
-    let user = new User();
+    const user = new User();
     user.email = this.email;
     user.password = this.password;
-    this.userService.login(user);
-    console.log(sessionStorage.getItem('email'));
+    this.userService.login(user).subscribe(result => {
+      if (result.username != null && result.userID != null) {
+        sessionStorage.setItem('userID', result.userID);
+        sessionStorage.setItem('username', result.username);
+        this.storyService.restartCurrentGame(Number(result.userID)).subscribe( hasGame => {
+          if(hasGame) {
+            this.router.navigate(['/chat']);
+          } else {
+            this.router.navigate(['']);
+          }
+        });
+      }
+    });
+
+    console.log(sessionStorage.getItem('userID') + '      ' + sessionStorage.getItem('email'));
   }
 
-  selectRegister() {
-    this.isRegisterdClicked = true;
-  }
-
+  /**
+   * Nutzer wird registriert und gleichzeitig eingeloggt.
+   */
   register() {
-    let user = new User();
+    const user = new User();
     user.email = this.email;
     user.password = this.password;
     user.username = this.username;
+    this.userService.login(user).subscribe(result => {
+      if (result.username != null && result.userID != null) {
+        sessionStorage.setItem('userID', result.userID);
+        sessionStorage.setItem('username', result.username);
+        this.router.navigate(['']);
+      }
+    });
+  }
+
+  /**
+   * Wenn der Nutzer sich registrieren möchte wird durch das Setzen der Variable auf true die Möglichkeit freigeschaltet.
+   */
+  selectRegister() {
+    this.isRegisterdClicked = true;
   }
 }

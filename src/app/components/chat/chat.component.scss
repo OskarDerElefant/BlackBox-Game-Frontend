@@ -11,6 +11,15 @@
   display: inline-block;
 }
 
+#selection {
+  width: 460px;
+  height: 40px;
+  z-index: 2;
+  position: absolute;
+  left: 487px;
+  top: 732px;
+}
+
 ::ng-deep nb-layout-column {
   justify-content: center;
   display: flex;

@@ -8,7 +8,7 @@
       <nb-option *ngFor="let answer of selectableAnswers" [value]="answer.answerMessage">{{answer.answerMessage}}</nb-option>
     </nb-select>
 
-    <nb-chat title="Drag & Drop chat" size="giant">
+    <nb-chat title="{{storyTitle}}" size="giant">
   <nb-chat-message *ngFor="let msg of messages"
                    [type]="msg.type"
                    [message]="msg.text"
@@ -18,7 +18,7 @@
                    [files]="msg.files"
                    [avatar]="msg.user.avatar">
   </nb-chat-message>
-  <nb-chat-form (click)="sendAnswers()" (send)="sendMessage($event)" [dropFiles]="true"></nb-chat-form>
+  <nb-chat-form (click)="sendAnswer()" (send)="sendMessage($event)" [dropFiles]="true"></nb-chat-form>
 </nb-chat>
 </nb-layout-column>
 

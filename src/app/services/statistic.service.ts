@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
-import {StatisticObject} from '../models/statistic.object';
+import {StatisticUserObject} from '../models/statistic.user.object';
 
 /**
  * Service for getting statistics either for a specific user or the overall statistics.
@@ -13,14 +13,17 @@ import {StatisticObject} from '../models/statistic.object';
 })
 export class StatisticService {
 
+  url = 'http://localhost:9000/';
+
   constructor(private http: HttpClient) { }
 
-  public getUserStatistic(user: User): Observable<StatisticObject> {
-    return this.http.get<StatisticObject>('http://localhost:9000/');
+  public getUserStatistic(userID: number): Observable<any> {
+    const userStatisticUrl = this.url + 'getUserStatistics?';
+    return this.http.get<any>(userStatisticUrl + userID);
   }
 
   public getGeneralStatistic(): Observable<any> {
-
-    return null;
+    const generalStatisticUrl = this.url + 'getStatistics?';
+    return this.http.get<any>(generalStatisticUrl);
   }
 }

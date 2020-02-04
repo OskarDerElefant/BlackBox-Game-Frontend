@@ -1,7 +1,8 @@
-export class StatisticObject {
+export class StatisticGameObject {
   userID: number;
   playedTime: number;
   timeUnit: string;
   visitedNodes: number;
-  numberOfGames: number;
+  scenarioID: number;
+  gameID: number;
 }

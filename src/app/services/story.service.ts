@@ -22,52 +22,42 @@ export class StoryService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Erwartet die erste Nachricht, direkt nachdem die Story gewählt wurde.
+   * Setzt das gewählte Szenario.
    **/
-  public setSelectedStory(selectedStory: number): Observable<boolean> {
-    /*const initialMessage = new NodeMessage();
-    initialMessage.message = 'Hallo';
-    initialMessage.type = MessageType.Text;
-    initialMessage.nodeMessageID = 1;
-    return initialMessage*/
+  public setSelectedStory(scenarioID: number, userID: number): Observable<boolean> {
+    const nextMessageUrl = this.url + 'setSelectedStory?';
+    const params = 'scenarioID=' + scenarioID + '&' + 'userID=' + userID;
+    return this.http.get<any>(nextMessageUrl + params);
+  }
 
-    const nextMessageUrl = this.url + 'selectedStory';
-    //NUMBER ÜBERGEBEN
-    //return this.http.post<MessageObject>(nextMessageUrl, selectedStory);
-    return null;
+
+  public getNextMessageFromQueue(userID: number): Observable<any[]> {
+    const nextMessageUrl = this.url + 'getNextMessage?';
+    return this.http.get<string[]>(nextMessageUrl + userID);
   }
 
   /**
-   * Erwartet die nächste NodeMessage auf Grundlage der ausgewählten Antwort des Nutzers.
-   * @param answer
-   * Die gewählte Antwort des Nutzers.
+   * Sendet die ausgewählte Antwort an das Backend
+   * @param answerID
+   * Die ID der ausgewählten Antwort.
+   * @param userID
+   * Die ID des Spielers.
    */
-  public getNextStoryPoint(answer: Answer): NodeMessage {
-    const message = new NodeMessage();
-    message.message = 'Hallo';
-    message.type = MessageType.Text;
-    message.nodeMessageID = 1;
-    return message;
+  public sendRepsonseToServer(answerID: number, userID: number): Observable<boolean> {
+    const sendRepsonseUrl = this.url + 'sendResponseToServer?';
+    const params = 'answerID=' + answerID + '&' + 'userID=' + userID;
+    return this.http.get<boolean>(sendRepsonseUrl + params);
   }
 
-  public getNextMessageFromQueue(): Observable<MessageObject> {
-    const nextMessageUrl = this.url + 'nextMessage';
-    return this.http.get<MessageObject>(nextMessageUrl);
+  /**
+   * Wenn der Nutzer sich erneut einloggt und ein offenes Spiel hat, wirde dieses geladen
+   * @param userID
+   */
+  restartCurrentGame(userID: number): Observable<boolean> {
+    const currentGameUrl = this.url + 'restartCurrentGame?';
+    return this.http.get<any>(currentGameUrl + userID);
   }
 
-  public sendRepsonseToServer(answerID: number): Observable<boolean> {
-    const sendRepsonseUrl = this.url + 'send';
-    //return this.http.post(sendRepsonseUrl, answerID);
-    return null;
-  }
-
-  public saveCurrentPositionInStory(visitedStoryPoint: NodeMessage[]): Observable<NodeMessage[]> {
-    return null;
-  }
-
-  public loadCurrentPositionInStory(visitedStoryPoint: NodeMessage[]): Observable<NodeMessage[]> {
-    return null;
-  }
 
   /**
    * Nachrichten werden lokal gespeichert, um nicht immer auf das Backend zugreifen zu müssen, um den Chat-Verlauf darzustellen.

@@ -14,12 +14,11 @@ import {element} from 'protractor';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  selectedItem = '2';
+  storyTitle = '';
 
   selectedStory: string;
   selectedStoryNumber: number;
-  test: string[] = ['a', 'ab'];
-  botName = '';
+
   userName = 'NUTZERNAMEN ANZEIGEN';
   answers: Answer[] = [];
   inputField: any;
@@ -33,16 +32,9 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedStory = this.route.snapshot.paramMap.get('selectedStory');
-    if (this.selectedStory === StringConstants.MURDER_STORY) {
-      this.selectedStoryNumber = 0;
-      this.botName = 'Bot Murder';
-    } else if (this.selectedStory === StringConstants.TREASURE_STORY) {
-      this.selectedStoryNumber = 1;
-      this.botName = 'Bot Treasure';
-    }
+    this.setBasicConfiguration();
 
-    this.messages.push({
+    /*this.messages.push({
         text: 'Drag & drop a file or a group of files.',
         reply: false,
         user: {
@@ -50,66 +42,73 @@ export class ChatComponent implements OnInit {
           avatar: 'https://i.gifer.com/no.gif',
         },
       },
-    );
-    this.showAnswers();
+    );*/
+    this.userName = sessionStorage.getItem('username');
     this.setPositionOfSelection();
-    /* this.storyService.setSelectedStory(this.selectedStoryNumber).subscribe(
-       data => {
-         this.getNextMessageFromQueue();
-       }
-     );*/
-  }
-
-  setPositionOfSelection() {
-    const x = document.getElementsByTagName('input');
-    this.inputField = x[0].getBoundingClientRect();
-    const selection = document.getElementById('selection');
-    console.log(this.inputField.offsetTop);
-    selection.style.position = 'absolute';
-    selection.style.left = this.inputField.left + 'px';
-    selection.style.top = 0+'px';
   }
 
   /**
-   * Fragt so lange nach neuen Nachrichten, bis Antwortmöglichkeiten mitgeliefert werden.
+   * Ruft die Grundlegenden Funktionen auf:
+   * Wenn der Nutzer durch die Anwendung navigiert und später zurück auf die Chat-Page kommt, werden die vorhandenen Daten lokal geladen.
+   * Wenn der Nutzer ein neues Spiel startet und auf die Chat-Page kommt, wird das gewählte Scenario gesetzt.
    */
-  getNextMessageFromQueue() {
-    while (this.answers.length <= 1) {
-      let messageObject: MessageObject;
-      this.storyService.getNextMessageFromQueue().subscribe(data => {
-        messageObject = data;
-        this.createBotMessageToDisplay(messageObject.nodeMessage);
-        if (messageObject.answers != null) {
-          this.answers = messageObject.answers;
-          this.showAnswers();
-        }
-      });
+  setBasicConfiguration() {
+    this.selectedStory = this.route.snapshot.paramMap.get('selectedStory');
+    if (this.storyService.getAllLocalMessages() != null && this.storyService.getAllLocalMessages().length > 0) {
+      this.setAllMessagesBasedOnLocalStorage();
+    } else if(this.selectedStory === StringConstants.MURDER_STORY) {
+        this.selectedStoryNumber = 0;
+        this.storyTitle = 'Mord in der Zukunft';
+        this.setSelectedStory();
+    } else if(this.selectedStory === StringConstants.TREASURE_STORY) {
+        this.selectedStoryNumber = 1;
+        this.storyTitle = 'Der verlorene Schatz';
+        this.setSelectedStory();
     }
   }
 
-  sendMessage(event) {
-    this.messages.push({
-      text: event.message,
-      // date: new Date(),
-      reply: true,
-      user: {
-        name: 'Jonh Doe',
-        avatar: 'https://techcrunch.com/wp-content/uploads/2015/08/safe_image.gif',
-      },
-    });
+  /**
+   * Sendet die Nummer des gewählten Szenarios an das Backend.
+   * Bei erfolgreicher Antwort des Backends wird angefangen die Nachrichten abzurufen.
+   */
+  setSelectedStory() {
+    const userID = Number(sessionStorage.getItem('userID'));
+    this.storyService.setSelectedStory(this.selectedStoryNumber, userID).subscribe(
+      isStorySelected => {
+        if (isStorySelected) {
+          this.getNextMessage(userID);
+        }
+      }
+    );
+  }
 
-    const botMessage = {
-      text: 'Antwort',
-      date: new Date(),
-      reply: false,
-      user: {
-        name: 'Bot',
-        avatar: 'https://i.gifer.com/no.gif',
-      },
-    };
-    setTimeout(() => {
-      this.messages.push(botMessage);
-    }, 500);
+  /**
+   * Ermittelt die nächste Nachricht vom Backend.
+   * Wird eine NodeMessage erhalten, ist es eine Nachricht vom Chat-partner, welche dann angezeigt wird.
+   * Wird eine AnswerList erhalten, handelt es sich um die Antwortmöglichkeiten, welche der Spieler hat. Es handelt sich dabei um ein Array des Typs Answer.
+   * Wird eine Servermessage erhalten, handelt es sich um die Rückmeldung des Servers, dass keine neuen Nachrichten erhalten werden.
+   * @param userID
+   */
+  getNextMessage(userID: number) {
+    this.storyService.getNextMessageFromQueue(userID).subscribe( messages => {
+      if(messages == null || messages.length < 1) {
+        this.getNextMessage(userID);
+      } else {
+        const recievedMessages = messages;
+        recievedMessages.forEach(message => {
+          let obj = JSON.parse(message);
+          if(obj.answerType === 'NodeMessage') {
+            this.createBotMessageToDisplay(obj.msg);
+            this.getNextMessage(userID);
+          } else if(obj.answerType === 'AnswerList') {
+            this.setAnswers(obj.msg);
+          } else if(obj.answerType === 'Servermessage') {
+
+          }
+          // Es muss gewartet werden bis nachricht da ist.
+        });
+      }
+    });
   }
 
   /**
@@ -124,7 +123,7 @@ export class ChatComponent implements OnInit {
         text: nodeMessage.message,
         reply: false,
         user: {
-          name: this.botName,
+          name: nodeMessage.sender,
         }
       });
     } else if (nodeMessage.type === MessageType.Image) {
@@ -132,7 +131,7 @@ export class ChatComponent implements OnInit {
         text: nodeMessage.message,
         reply: false,
         user: {
-          name: this.botName,
+          name: nodeMessage.sender,
         }
       });
     } else if (nodeMessage.type === MessageType.Video) {
@@ -140,7 +139,7 @@ export class ChatComponent implements OnInit {
         text: nodeMessage.message,
         reply: false,
         user: {
-          name: this.botName,
+          name: nodeMessage.sender,
         }
       });
     } else if (nodeMessage.type === MessageType.Voice) {
@@ -148,7 +147,7 @@ export class ChatComponent implements OnInit {
         text: nodeMessage.message,
         reply: false,
         user: {
-          name: this.botName,
+          name: nodeMessage.sender,
         }
       });
     }
@@ -166,7 +165,7 @@ export class ChatComponent implements OnInit {
       text: answer.answerMessage,
       reply: true,
       user: {
-        name: sessionStorage.getItem('email'),
+        name: this.userName,
       },
     });
   }
@@ -174,57 +173,41 @@ export class ChatComponent implements OnInit {
   /**
    * Wenn alle Nachrichten einer Node erhalten wurden, werden die Antworten geschickt.
    * Sobald dies geschieht erhält der Nutzer die Möglichkeit, aus diesen auszuwählen und zu antworten.
+   * Wenn die Liste nur die Größe 1 hat handelt es sich um das erneute Laden des Chats. Die Antwort wurde bereits gegeben und wird nun angezeigt.
    */
-  showAnswers() {
-    const answer = new Answer();
-    answer.answerMessage = 'hallo';
-    answer.answerIdCounter = 1;
-    answer.answerID = 2;
-    answer.answerNode = null;
-
-    const answer2 = new Answer();
-    answer2.answerMessage = 'wie';
-    answer2.answerIdCounter = 2;
-    answer2.answerID = 2;
-    answer2.answerNode = null;
-
-    const answer3 = new Answer();
-    answer3.answerMessage = 'gehts';
-    answer3.answerIdCounter = 3;
-    answer3.answerID = 2;
-    answer3.answerNode = null;
-
+  setAnswers(possibilities: Answer[]) {
     this.selectableAnswers = [];
-    this.selectableAnswers.push(answer);
-    this.selectableAnswers.push(answer2);
-    this.selectableAnswers.push(answer3);
+    if(possibilities.length > 1) {
+      this.selectableAnswers = possibilities;
+    } else {
+      this.createUserMessageToDisplay(possibilities[0]);
+    }
   }
 
-  sendAnswers() {
+  /**
+   * Zuerst wird die ausgewählte Antwort ermittelt.
+   * Diese wird dann im Chat angezeigt und danach an das Backend gesendet.
+   * Wenn das Backend erfolgreich antwortet wird die nächste Nachricht abegrufen.
+   */
+  sendAnswer() {
+    const userID = Number(sessionStorage.getItem('userID'));
     this.selectableAnswers.forEach(answer => {
       if (answer.answerMessage === this.selectedAnswer) {
         console.log('Treffer');
         console.log(answer.answerID);
         this.createUserMessageToDisplay(answer);
-        /*this.storyService.sendRepsonseToServer(this.selectedAnswer.answerID).subscribe(
-          data => {
+        this.storyService.sendRepsonseToServer(answer.answerID, userID).subscribe(
+          isAnswerOk => {
             this.answers = [];
             this.selectedAnswer = null;
-            this.getNextMessageFromQueue();
+            if(isAnswerOk) {
+              this.getNextMessage(userID);
+            }
           }
-        );*/
-
+        );
       }
     });
-    /*this.storyService.sendRepsonseToServer(this.selectedAnswer.answerID).subscribe(
-      data => {
-        this.answers = [];
-        this.selectedAnswer = null;
-        this.getNextMessageFromQueue();
-      }
-    );*/
   }
-
 
   /**
    * Holt alle Nachrichten, die lokal gespeichert werden. Beispielsweise beim Aufruf der Seite.
@@ -232,7 +215,7 @@ export class ChatComponent implements OnInit {
    */
   setAllMessagesBasedOnLocalStorage() {
     this.messages = [];
-    let allMessages = this.storyService.getAllLocalMessages();
+    const allMessages = this.storyService.getAllLocalMessages();
     if(allMessages.length > 0) {
       allMessages.forEach(element => {
         if(element instanceof NodeMessage) {
@@ -242,5 +225,24 @@ export class ChatComponent implements OnInit {
         }
       });
     }
+  }
+
+  setPositionOfSelection() {
+    /* const x = document.getElementsByTagName('input');
+     this.inputField = x[0].getBoundingClientRect();
+     const selection = document.getElementById('selection');
+     console.log(this.inputField.width);
+     selection.style.width = this.inputField.width + 'px';
+     selection.style.height = this.inputField.height + 'px';
+    /* selection.style.position = 'absolute';
+     selection.style.left = this.inputField.left + 'px';
+     selection.style.top = 0+'px';*/
+    /*console.log(selection.style.width);
+    this.inputField.hidden = true;*/
+
+    const x = document.getElementsByTagName('input');
+    let t = x[0].getBoundingClientRect();
+    console.log('TOP: ' + t.top + pageYOffset );
+    console.log('Left: ' + t.left + pageXOffset );
   }
 }

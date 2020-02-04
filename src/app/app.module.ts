@@ -18,17 +18,17 @@ import {
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
-import { ChatElementComponent } from './components/chat/chat-element/chat-element.component';
-import {NbThemeModule, NbChatModule, NbLayoutModule, NbSelectModule} from '@nebular/theme';
+import {NbThemeModule, NbChatModule, NbLayoutModule, NbSelectModule, NbIconComponent, NbIconModule} from '@nebular/theme';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AuthGuardService} from './services/auth-guard.service';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent } ,
   { path: 'logout', component: LoginComponent},
-  { path: 'home', component: MenuComponent } ,
-  { path: 'chat/:selectedStory', component: ChatComponent } ,
-  { path: 'statistics', component: StatisticComponent } ,
+  { path: 'home', component: MenuComponent, canActivate: [AuthGuardService] } ,
+  { path: 'chat/:selectedStory', component: ChatComponent, canActivate: [AuthGuardService] } ,
+  { path: 'statistics', component: StatisticComponent, canActivate: [AuthGuardService] } ,
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
 
@@ -39,7 +39,6 @@ const appRoutes: Routes = [
     MenuComponent,
     ChatComponent,
     StatisticComponent,
-    ChatElementComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +60,8 @@ const appRoutes: Routes = [
     MatSelectModule,
     NbSelectModule,
     MatTabsModule,
-    MatTableModule
+    MatTableModule,
+    NbIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
+import {Router} from '@angular/router';
 
 /**
  * Service for managing users.
@@ -12,52 +13,31 @@ import {User} from '../models/user';
 })
 export class UserService {
 
-  url = 'http://localhost:8090/api/user/';
+  url = 'http://localhost:9000/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   /**
    * Gibt true zurück, wenn Login erfolgreich war.
    * @param user
    * User, der sich anmelden möchte.
    */
-  public login(user: User) {
-    const loginUrl = this.url + 'login';
-    let succesfullLogin;
-    sessionStorage.setItem('email', user.email);
-    /*this.http.get<boolean>(loginUrl).subscribe(
-      data => {
-        succesfullLogin = data;
-        if(succesfullLogin) {
-          sessionStorage.setItem('email', user.email);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    );*/
+  public login(user: User): Observable<any> {
+    const loginUrl = this.url + 'login?';
+
+    let objectString = JSON.stringify(user);
+    objectString = btoa(objectString);
+
+    return this.http.get<boolean>(loginUrl + objectString);
   }
 
   /**
-   * Gibt true zurück, wenn Logout erfolgreich war.
-   * @param user
-   * User, der sich abmelden möchte.
+   * Die lokal gespeicherten Werte des Nutzers werden gelöscht.
    */
-  public logout(user: User) {
-    const logoutUrl = this.url + 'logout';
-    let succesfullLogout;
-    sessionStorage.removeItem('email');
-    /*this.http.get<boolean>(logoutUrl).subscribe(
-      data => {
-        succesfullLogout = data;
-        if(succesfullLogout) {
-          sessionStorage.removeItem('email');
-          return true;
-        } else {
-          return false;
-        }
-      }
-    );*/
+  public logout() {
+    sessionStorage.removeItem('userID');
+    sessionStorage.removeItem('username');
+    this.router.navigate(['login']);
   }
 
   /**
@@ -65,19 +45,18 @@ export class UserService {
    * @param user
    * User, der sich registrieren möchte.
    */
-  public registerUser(user: User) {
-    const registerUrl = this.url + 'registerUser';
-    let succesfullregisterd;
-    this.http.get<boolean>(registerUrl).subscribe(
-      data => {
-        succesfullregisterd = data;
-        if(succesfullregisterd) {
-          sessionStorage.setItem('email', user.email);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    );
+  public registerUser(user: User): Observable<any> {
+    const registerUrl = this.url + 'register?';
+
+    let objectString = JSON.stringify(user);
+    objectString = btoa(objectString);
+
+    return this.http.get<boolean>(registerUrl + objectString);
+  }
+
+  isUserLoggedIn() {
+    const user = sessionStorage.getItem('username');
+    console.log(user);
+    return !(user === null);
   }
 }

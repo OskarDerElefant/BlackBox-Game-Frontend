@@ -2,34 +2,29 @@
   <!-- The buttons for the navigation -->
   <nav>
     <div class="flex-container">
-      <button class="toolbar-button" mat-button matTooltip="Home" routerLink="home" routerLinkActive="active">
-        <mat-icon>
-          home
-        </mat-icon>
-      </button>
+      <div>
+        <button class="toolbar-button" mat-button matTooltip="Home" routerLink="home" routerLinkActive="active">
+          <mat-icon>
+            home
+          </mat-icon>
+        </button>
+        <button class="toolbar-button" mat-button matTooltip="Statistics" routerLink="statistics"
+                routerLinkActive="active">
+          <mat-icon>
+            trending_up
+          </mat-icon>
+        </button>
+      </div>
 
       <span class="toolbar-title" routerLink="home" routerLinkActive="active">BlackBox</span>
 
-      <button [matMenuTriggerFor]="menu" class="toolbar-button" mat-icon-button>
-        <mat-icon>more_vert</mat-icon>
-      </button>
-    </div>
-
-    <!-- Buttons of the menu. At this position because otherwise it would have impact on the flexbox layout -->
-    <mat-menu #menu="matMenu">
-      <button class="menu-button" mat-menu-item matTooltip="Statistics" routerLink="statistics"
-              routerLinkActive="active">
-        <mat-icon>
-          trending_up
-        </mat-icon>
-      </button>
-      <button class="menu-button" mat-menu-item matTooltip="Logout" routerLink="logout"
+      <button class="toolbar-button" mat-button matTooltip="Logout" routerLink="logout"
               routerLinkActive="active">
         <mat-icon>
           power_settings_new
         </mat-icon>
       </button>
-    </mat-menu>
+    </div>
   </nav>
 
 </mat-toolbar>

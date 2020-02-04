@@ -44,19 +44,24 @@ export class ChatComponent implements OnInit {
    */
   setBasicConfiguration() {
     this.selectedStory = this.route.snapshot.paramMap.get('selectedStory');
-    if (this.storyService.getAllLocalMessages() != null && this.storyService.getAllLocalMessages().length > 0) {
-      //this.setAllMessagesBasedOnLocalStorage();
-    } else if(this.selectedStory === StringConstants.MURDER_STORY) {
+    if(this.selectedStory == null) {
+      if (this.storyService.getAllLocalMessages() != null && this.storyService.getAllLocalMessages().length > 0) {
+        this.setAllMessagesBasedOnLocalStorage();
+        this.checkForStoryTitle();
+      } else {
+        this.getNextMessage(Number(sessionStorage.getItem('username')));
+        this.checkForStoryTitle();
+      }
+    } else {
+      if(this.selectedStory === StringConstants.MURDER_STORY) {
         this.selectedStoryNumber = 0;
         this.storyTitle = 'Mord in der Zukunft';
         this.setSelectedStory();
-    } else if(this.selectedStory === StringConstants.TREASURE_STORY) {
+      } else if(this.selectedStory === StringConstants.TREASURE_STORY) {
         this.selectedStoryNumber = 1;
         this.storyTitle = 'Der verlorene Schatz';
         this.setSelectedStory();
-    } else {
-      console.log('NOMESSAGE');
-      this.setAllMessagesBasedOnLocalStorage();
+      }
     }
   }
 
@@ -92,8 +97,13 @@ export class ChatComponent implements OnInit {
           console.log(message.answertype);
           if(message.answertype === 'NodeMessage') {
             console.log(message.msg);
-            this.createBotMessageToDisplay(message.msg);
-            this.getNextMessage(userID);
+            if(message.msg.sender === 'Ich') {
+              this.createUserMessageToDisplayWithNodeMessage(message.msg);
+            } else {
+              this.createBotMessageToDisplay(message.msg);
+              this.getNextMessage(userID);
+            }
+
           } else if(message.answertype === 'AnswerList') {
             this.setAnswers(message.msg);
           } else if(message.answertype === 'Servermessage') {
@@ -122,37 +132,40 @@ export class ChatComponent implements OnInit {
       });
       this.storyService.localSaveOfMessages(nodeMessage);
     } else if (nodeMessage.messagetype === 'Image') {
-      const url = '/assets' + nodeMessage.message;
+      const image = nodeMessage.message.substr(2);
       this.messages.push({
         type: 'file',
         reply: false,
-        files: [ { url: '/assets' + nodeMessage.message, type: 'image/jpg' }],
+        files: [ { url: '/assets' + image, type: 'image/jpg' }],
         user: {
           name: nodeMessage.sender,
         }
       });
       this.storyService.localSaveOfMessages(nodeMessage);
     } else if (nodeMessage.messagetype === 'Video') {
-      const url = '/assets' + nodeMessage.message;
+      const video = nodeMessage.message.substr(2);
       this.messages.push({
         type: 'file',
         reply: false,
-        files: [ { url: '/assets' + nodeMessage.message, type: 'video/mp4' }],
+        files: [ { url: '/assets' + video, type: 'video/mp4' }],
         user: {
           name: nodeMessage.sender,
         }
       });
       this.storyService.localSaveOfMessages(nodeMessage);
     } else if (nodeMessage.messagetype === 'Voice') {
-      const url = '/assets' + nodeMessage.message;
+      const voice = nodeMessage.message.substr(2);
       this.messages.push({
         type: 'file',
         reply: false,
-        files: [ { url: '/assets' + nodeMessage.message, type: 'audio/mp3' }],
+        files: [ { url: '/assets' + voice, type: 'audio/mp3' }],
         user: {
           name: nodeMessage.sender,
         }
       });
+      if(this.messages.length === 1) {
+        this.checkForStoryTitle();
+      }
       this.storyService.localSaveOfMessages(nodeMessage);
     }
 
@@ -172,6 +185,37 @@ export class ChatComponent implements OnInit {
         name: this.userName,
       },
     });
+    if(this.messages.length === 1) {
+      this.checkForStoryTitle();
+    }
+    this.storyService.localSaveOfMessages(answer);
+  }
+
+  createUserMessageToDisplayWithNodeMessage(nodeMessage: NodeMessage) {
+    if (nodeMessage.messagetype === 'Text') {
+      this.messages.push({
+        text: nodeMessage.message,
+        reply: true,
+        user: {
+          name: this.userName,
+        }
+      });
+      this.storyService.localSaveOfMessages(nodeMessage);
+    } else if (nodeMessage.messagetype === 'Image') {
+      const image = nodeMessage.message.substr(2);
+      this.messages.push({
+        type: 'file',
+        reply: true,
+        files: [{url: '/assets' + image, type: 'image/jpg'}],
+        user: {
+          name: this.userName,
+        }
+      });
+      this.storyService.localSaveOfMessages(nodeMessage);
+    }
+    if(this.messages.length === 1) {
+      this.checkForStoryTitle();
+    }
   }
 
   /**
@@ -230,6 +274,16 @@ export class ChatComponent implements OnInit {
         }
       });
     }
+  }
+
+  checkForStoryTitle() {
+    if(this.messages[0].sender === 'Kommissar Thomas') {
+      this.storyTitle = 'Mord in der Zukunft';
+    } else if(this.messages[0].sender === 'Ich') {
+      this.storyTitle = 'Der verlorene Schatz';
+    }
+
+    console.log(this.storyTitle);
   }
 
   setPositionOfSelection() {

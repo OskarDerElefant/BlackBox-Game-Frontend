@@ -1,9 +1,6 @@
 
 <nb-layout>
   <nb-layout-column>
-    <p>
-      {{selectedStory}} Story
-    </p>
     <nb-select id="selection" placeholder="Select Showcase" [(ngModel)]="selectedAnswer">
       <nb-option *ngFor="let answer of selectableAnswers" [value]="answer.answerMessage">{{answer.answerMessage}}</nb-option>
     </nb-select>
@@ -18,7 +15,7 @@
                    [files]="msg.files"
                    [avatar]="msg.user.avatar">
   </nb-chat-message>
-  <nb-chat-form (click)="sendAnswer()" (send)="sendMessage($event)" [dropFiles]="true"></nb-chat-form>
+  <nb-chat-form (click)="sendAnswer()" [dropFiles]="true"></nb-chat-form>
 </nb-chat>
 </nb-layout-column>
 

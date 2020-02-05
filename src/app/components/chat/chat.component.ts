@@ -19,6 +19,8 @@ export class ChatComponent implements OnInit {
   selectedStory: string;
   selectedStoryNumber: number;
 
+  isMessageInQueue = false;
+
   userName = 'NUTZERNAMEN ANZEIGEN';
   answers: Answer[] = [];
   inputField: any;
@@ -32,8 +34,8 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setBasicConfiguration();
     this.userName = sessionStorage.getItem('username');
+    this.setBasicConfiguration();
     this.setPositionOfSelection();
   }
 
@@ -49,8 +51,8 @@ export class ChatComponent implements OnInit {
         this.setAllMessagesBasedOnLocalStorage();
         this.checkForStoryTitle();
       } else {
-        this.getNextMessage(Number(sessionStorage.getItem('username')));
-        this.checkForStoryTitle();
+        console.log('test');
+        this.getNextMessage(Number(sessionStorage.getItem('userID')));
       }
     } else {
       if(this.selectedStory === StringConstants.MURDER_STORY) {
@@ -92,25 +94,47 @@ export class ChatComponent implements OnInit {
       if(messages == null || messages.length < 1) {
         this.getNextMessage(userID);
       } else {
+        console.log('MESSAGES.LENGTH ' + this.messages.length);
+        if(this.messages.length === 1) {
+          console.log('CHECK TITLE');
+          this.checkForStoryTitle();
+        }
         const recievedMessages = messages;
-        recievedMessages.forEach(message => {
-          console.log(message.answertype);
+        for(let i = 0; i < recievedMessages.length; i++) {
+          console.log(recievedMessages[i].answertype + 'MESSAGE' + i);
+          if(recievedMessages[i].answertype === 'NodeMessage') {
+            console.log(recievedMessages[i].msg);
+            if(recievedMessages[i].msg.messagetype === 'Servermessage') {
+              this.createEndMessage(recievedMessages[i].msg);
+            }
+            console.log(recievedMessages[i].msg.sender);
+            if(recievedMessages[i].msg.sender !== 'Ich') {
+              console.log('SEND BOT MESSAGE');
+              this.createBotMessageToDisplay(recievedMessages[i].msg);
+              if(i === (recievedMessages[i].length - 1)) {
+                this.getNextMessage(userID);
+              }
+            }
+          } else if(recievedMessages[i].answertype === 'AnswerList') {
+            this.setAnswers(recievedMessages[i].msg);
+          }
+        }
+        /*recievedMessages.forEach(message => {
+          console.log(message + 'MESSAGE');
           if(message.answertype === 'NodeMessage') {
             console.log(message.msg);
-            if(message.msg.sender === 'Ich') {
-              this.createUserMessageToDisplayWithNodeMessage(message.msg);
-            } else {
+            if(message.msg.messagetype === 'Servermessage') {
+              this.createEndMessage(message.msg);
+            }
+            if(message.msg.sender !== 'Ich') {
               this.createBotMessageToDisplay(message.msg);
               this.getNextMessage(userID);
             }
 
           } else if(message.answertype === 'AnswerList') {
             this.setAnswers(message.msg);
-          } else if(message.answertype === 'Servermessage') {
-
           }
-          // Es muss gewartet werden bis nachricht da ist.
-        });
+        });*/
       }
     });
   }
@@ -163,12 +187,11 @@ export class ChatComponent implements OnInit {
           name: nodeMessage.sender,
         }
       });
-      if(this.messages.length === 1) {
-        this.checkForStoryTitle();
-      }
       this.storyService.localSaveOfMessages(nodeMessage);
     }
-
+    if(this.messages.length === 1) {
+      this.checkForStoryTitle();
+    }
   }
 
   /**
@@ -191,31 +214,18 @@ export class ChatComponent implements OnInit {
     this.storyService.localSaveOfMessages(answer);
   }
 
-  createUserMessageToDisplayWithNodeMessage(nodeMessage: NodeMessage) {
-    if (nodeMessage.messagetype === 'Text') {
-      this.messages.push({
-        text: nodeMessage.message,
-        reply: true,
-        user: {
-          name: this.userName,
-        }
-      });
-      this.storyService.localSaveOfMessages(nodeMessage);
-    } else if (nodeMessage.messagetype === 'Image') {
-      const image = nodeMessage.message.substr(2);
-      this.messages.push({
-        type: 'file',
-        reply: true,
-        files: [{url: '/assets' + image, type: 'image/jpg'}],
-        user: {
-          name: this.userName,
-        }
-      });
-      this.storyService.localSaveOfMessages(nodeMessage);
-    }
-    if(this.messages.length === 1) {
-      this.checkForStoryTitle();
-    }
+  /**
+   * Wenn der Server eine Servermessage schickt, ist das Spiel beendet.
+   * @param nodeMessage
+   */
+  createEndMessage(nodeMessage: NodeMessage) {
+    this.messages.push({
+      text: nodeMessage.message,
+      reply: false,
+      user: {
+        name: nodeMessage.sender,
+      }
+    });
   }
 
   /**
@@ -228,7 +238,10 @@ export class ChatComponent implements OnInit {
     if(possibilities.length > 1) {
       this.selectableAnswers = possibilities;
     } else {
+      console.log(possibilities[0]);
       this.createUserMessageToDisplay(possibilities[0]);
+      console.log(possibilities[0].answerMessage + 'possibilities' );
+      this.getNextMessage(Number(sessionStorage.getItem('username')));
     }
   }
 
@@ -246,8 +259,8 @@ export class ChatComponent implements OnInit {
         this.createUserMessageToDisplay(answer);
         this.storyService.sendRepsonseToServer(answer.answerID, userID).subscribe(
           isAnswerOk => {
-            this.answers = [];
-            this.selectedAnswer = null;
+            this.selectableAnswers = [];
+            this.selectedAnswer = '';
             if(isAnswerOk) {
               this.getNextMessage(userID);
             }
@@ -264,24 +277,31 @@ export class ChatComponent implements OnInit {
   setAllMessagesBasedOnLocalStorage() {
     this.messages = [];
     const allMessages = this.storyService.getAllLocalMessages();
-    console.log('ALLLLLL ' + allMessages);
+    this.storyService.resetAllLocalMessages();
+    console.log('ALLLLLL ' + this.storyService.getAllLocalMessages());
     if(allMessages.length > 0) {
       allMessages.forEach(element => {
-        if(element instanceof NodeMessage) {
+        console.log(element.messagetype);
+        if(element.messagetype != null) {
+          console.log('NODEMESSAGE');
           this.createBotMessageToDisplay(element);
-        } else if(element instanceof Answer) {
+        } else if(element.answerMessage) {
+          console.log('ANSWER');
           this.createUserMessageToDisplay(element);
         }
       });
+      this.getNextMessage(Number(sessionStorage.getItem('userID')));
     }
   }
 
   checkForStoryTitle() {
-    if(this.messages[0].sender === 'Kommissar Thomas') {
-      this.storyTitle = 'Mord in der Zukunft';
-    } else if(this.messages[0].sender === 'Ich') {
-      this.storyTitle = 'Der verlorene Schatz';
-    }
+   /* if(this.messages[0] !== null) {
+      if(this.messages[0].user.name === 'Kommissar Thomas') {
+        this.storyTitle = 'Mord in der Zukunft';
+      } else if(this.messages[0].user.name === 'Ich') {
+        this.storyTitle = 'Der verlorene Schatz';
+      }
+    }*/
 
     console.log(this.storyTitle);
   }

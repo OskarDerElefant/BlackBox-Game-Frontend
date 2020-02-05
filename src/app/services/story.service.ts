@@ -67,22 +67,27 @@ export class StoryService {
    * Zu speichernde Nachricht, entweder NodeMessage oder Answer
    */
   public localSaveOfMessages(message: any) {
-    /*if(sessionStorage.getItem('allMessages') != null) {
-      const allMessages = JSON.parse(sessionStorage.getItem('allMessages'));
+    if(sessionStorage.getItem('allMessages') != null) {
+      console.log('lokaler storage nicht leer ' + sessionStorage.getItem('allMessages'));
+      let allMessages = JSON.parse(sessionStorage.getItem('allMessages'));
       allMessages.push(message);
       sessionStorage.setItem('allMessages', JSON.stringify(allMessages));
     } else {
-      const allMessages = [];
+      let allMessages = [];
       allMessages.push(message);
       sessionStorage.setItem('allMessages', JSON.stringify(allMessages));
-    }*/
+      console.log('LOKALER STORAGE LEER');
+    }
   }
 
   /**
    * Gibt alle lokal gespeicherten Nachrichten zurück.
    */
   public getAllLocalMessages(): any[] {
-    return null;
-    //return JSON.parse(sessionStorage.getItem('allMessages'));
+    return JSON.parse(sessionStorage.getItem('allMessages'));
+  }
+
+  public resetAllLocalMessages() {
+    sessionStorage.removeItem('allMessages');
   }
 }

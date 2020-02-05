@@ -39,6 +39,12 @@ export class StatisticComponent implements OnInit {
     this.statisticService.getUserStatistic(userID).subscribe(
       results => {
         results.forEach(statisticGameObject => {
+          if(statisticGameObject.playedTime === null) {
+            statisticGameObject.playedTime = 0;
+          }
+          if(statisticGameObject.gameID === null) {
+            statisticGameObject.gameID = 0;
+          }
           if (statisticGameObject.scenarioID === 0) {
             statisticsOfFistScenario.push(statisticGameObject);
           } else if (statisticGameObject.scenarioID === 1) {
@@ -61,6 +67,7 @@ export class StatisticComponent implements OnInit {
     const statisticsOfSecondScenario = [];
     this.statisticService.getGeneralStatistic().subscribe( results => {
       results.forEach(userStatisticObject => {
+        console.log(userStatisticObject.scenarioID + ' ' + userStatisticObject.visitedNodes + ' STATOBJ');
         if (userStatisticObject.scenarioID === 0) {
           statisticsOfFistScenario.push(userStatisticObject);
         } else if (userStatisticObject.scenarioID === 1) {

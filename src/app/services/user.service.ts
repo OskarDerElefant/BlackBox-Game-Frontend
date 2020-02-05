@@ -37,6 +37,7 @@ export class UserService {
   public logout() {
     sessionStorage.removeItem('userID');
     sessionStorage.removeItem('username');
+    sessionStorage.removeItem('allMessages');
     this.router.navigate(['login']);
   }
 

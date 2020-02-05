@@ -12,12 +12,27 @@
 }
 
 #selection {
-  width: 460px;
+  width: 960px;
   height: 40px;
   z-index: 2;
   position: absolute;
-  left: 487px;
+  left: 767px;
   top: 732px;
+}
+
+button {
+  height: 40px;
+  width: 50px;
+  position: absolute;
+  left: 1112px;
+  top: 732px;
+  z-index: 2;
+  padding-left: 2px;
+  padding-right: 2px;
+  background-color: dodgerblue;
+}
+mat-icon{
+    color: white;
 }
 
 ::ng-deep nb-layout-column {

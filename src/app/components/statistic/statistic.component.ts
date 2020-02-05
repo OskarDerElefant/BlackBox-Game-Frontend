@@ -13,7 +13,7 @@ import {StatisticUserObject} from '../../models/statistic.user.object';
 })
 export class StatisticComponent implements OnInit {
 
-  displayedColumns: string[] = ['story', 'playedTime', 'visitedNodes', 'numberOfGames'];
+  displayedColumns: string[] = ['story', 'userID', 'playedTime', 'visitedNodes', 'numberOfGames'];
   personalDataSource = [];
   generalDataSource = [];
 
@@ -67,10 +67,12 @@ export class StatisticComponent implements OnInit {
     const statisticsOfSecondScenario = [];
     this.statisticService.getGeneralStatistic().subscribe( results => {
       results.forEach(userStatisticObject => {
-        console.log(userStatisticObject.scenarioID + ' ' + userStatisticObject.visitedNodes + ' STATOBJ');
+        console.log(userStatisticObject.scenarioID + ' ' + userStatisticObject.visitedNodes + ' ' + userStatisticObject.userID + ' ' + userStatisticObject.numberOfGames + ' STATOBJ');
         if (userStatisticObject.scenarioID === 0) {
+          userStatisticObject.scenarioName = 'Mord in der Zukunft';
           statisticsOfFistScenario.push(userStatisticObject);
         } else if (userStatisticObject.scenarioID === 1) {
+          userStatisticObject.scenarioName = 'Der verlorene Schatz';
           statisticsOfSecondScenario.push(userStatisticObject);
         }
       });

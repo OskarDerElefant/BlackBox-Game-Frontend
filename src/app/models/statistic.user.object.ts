@@ -5,4 +5,5 @@ export class StatisticUserObject {
   visitedNodes: number;
   numberOfGames: number;
   scenarioID: number;
+  scenarioName: string;
 }

@@ -63,7 +63,7 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatTableModule,
     NbIconModule,
-    MatCardModule
+    MatCardModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -18,6 +18,7 @@ export class StoryService {
   url = 'http://localhost:9000/BlackboxWeb/';
 
   allMessages = [];
+  lastAnswerPossibilities = [];
 
   constructor(private http: HttpClient) { }
 
@@ -89,5 +90,17 @@ export class StoryService {
 
   public resetAllLocalMessages() {
     sessionStorage.removeItem('allMessages');
+  }
+
+  saveLastAnswerPossibilities(answers: Answer[]) {
+    sessionStorage.setItem('lastAnswers', JSON.stringify(answers));
+  }
+
+  getLastAnswerPossibilities(): Answer[] {
+    return JSON.parse(sessionStorage.getItem('lastAnswers'));
+  }
+
+  deleteLastAnswers() {
+    sessionStorage.removeItem('lastAnswers');
   }
 }

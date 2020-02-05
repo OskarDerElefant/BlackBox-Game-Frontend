@@ -5,7 +5,13 @@
       <!-- Story -->
       <ng-container matColumnDef="story">
         <th mat-header-cell *matHeaderCellDef> Story </th>
-        <td mat-cell *matCellDef="let element"> Mord-Story </td>
+        <td mat-cell *matCellDef="let element"> {{element.scenarioName}} </td>
+      </ng-container>
+
+      <!-- UserID -->
+      <ng-container matColumnDef="userID">
+        <th mat-header-cell *matHeaderCellDef> UserID </th>
+        <td mat-cell *matCellDef="let element"> {{element.userID}} </td>
       </ng-container>
 
       <!-- Gespielte Zeit -->
@@ -37,7 +43,13 @@
       <!-- Story -->
       <ng-container matColumnDef="story">
         <th mat-header-cell *matHeaderCellDef> Story </th>
-        <td mat-cell *matCellDef="let element"> Mord-Story </td>
+        <td mat-cell *matCellDef="let element"> {{element.scenarioName}} </td>
+      </ng-container>
+
+      <!-- UserID -->
+      <ng-container matColumnDef="userID">
+        <th mat-header-cell *matHeaderCellDef> UserID </th>
+        <td mat-cell *matCellDef="let element"> {{element.userID}} </td>
       </ng-container>
 
       <!-- Gespielte Zeit -->

@@ -105,6 +105,7 @@ export class ChatComponent implements OnInit {
           if(recievedMessages[i].answertype === 'NodeMessage') {
             console.log(recievedMessages[i].msg);
             if(recievedMessages[i].msg.messagetype === 'Servermessage') {
+              this.storyService.deleteLastAnswers();
               this.createEndMessage(recievedMessages[i].msg);
             }
             console.log(recievedMessages[i].msg.sender);
@@ -113,6 +114,7 @@ export class ChatComponent implements OnInit {
               this.createBotMessageToDisplay(recievedMessages[i].msg);
               if(i === (recievedMessages[i].length - 1)) {
                 this.getNextMessage(userID);
+                this.storyService.deleteLastAnswers();
               }
             }
           } else if(recievedMessages[i].answertype === 'AnswerList') {
@@ -235,6 +237,7 @@ export class ChatComponent implements OnInit {
    */
   setAnswers(possibilities: Answer[]) {
     this.selectableAnswers = [];
+    this.storyService.saveLastAnswerPossibilities(possibilities);
     if(possibilities.length > 1) {
       this.selectableAnswers = possibilities;
     } else {
@@ -290,6 +293,9 @@ export class ChatComponent implements OnInit {
           this.createUserMessageToDisplay(element);
         }
       });
+      if(this.storyService.getLastAnswerPossibilities().length > 1) {
+        this.setAnswers(this.storyService.getLastAnswerPossibilities());
+      }
       this.getNextMessage(Number(sessionStorage.getItem('userID')));
     }
   }

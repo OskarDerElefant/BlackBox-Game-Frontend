@@ -5,4 +5,5 @@ export class StatisticGameObject {
   visitedNodes: number;
   scenarioID: number;
   gameID: number;
+  scenarioName: string;
 }

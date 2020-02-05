@@ -28,8 +28,8 @@
 
       <!-- Gespielte Spiele -->
       <ng-container matColumnDef="numberOfGames">
-        <th mat-header-cell *matHeaderCellDef> Anzahl gespielter Spiele </th>
-        <td mat-cell *matCellDef="let element"> {{element.numberOfGames}} </td>
+        <th mat-header-cell *matHeaderCellDef> Spiel ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.gameID}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -48,8 +48,8 @@
 
       <!-- UserID -->
       <ng-container matColumnDef="userID">
-        <th mat-header-cell *matHeaderCellDef> UserID </th>
-        <td mat-cell *matCellDef="let element"> {{element.userID}} </td>
+        <th mat-header-cell *matHeaderCellDef> GespielteSpiele </th>
+        <td mat-cell *matCellDef="let element"> {{amountOfPlayers}} </td>
       </ng-container>
 
       <!-- Gespielte Zeit -->

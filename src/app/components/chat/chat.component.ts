@@ -94,23 +94,17 @@ export class ChatComponent implements OnInit {
       if(messages == null || messages.length < 1) {
         this.getNextMessage(userID);
       } else {
-        console.log('MESSAGES.LENGTH ' + this.messages.length);
         if(this.messages.length === 1) {
-          console.log('CHECK TITLE');
           this.checkForStoryTitle();
         }
         const recievedMessages = messages;
         for(let i = 0; i < recievedMessages.length; i++) {
-          console.log(recievedMessages[i].answertype + 'MESSAGE' + i);
           if(recievedMessages[i].answertype === 'NodeMessage') {
-            console.log(recievedMessages[i].msg);
             if(recievedMessages[i].msg.messagetype === 'Servermessage') {
               this.storyService.deleteLastAnswers();
               this.createEndMessage(recievedMessages[i].msg);
             }
-            console.log(recievedMessages[i].msg.sender);
             if(recievedMessages[i].msg.sender !== 'Ich') {
-              console.log('SEND BOT MESSAGE');
               this.createBotMessageToDisplay(recievedMessages[i].msg);
               if(i === (recievedMessages[i].length - 1)) {
                 this.getNextMessage(userID);
